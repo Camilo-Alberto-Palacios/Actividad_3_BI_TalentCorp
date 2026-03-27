@@ -43,7 +43,7 @@ SELECT de.NombreDepartamento, AVG(fe.Calificacion) / NULLIF((SUM(fa.DiasAusentes
 -- 14. Reporte final de auditoria para demostrar monitoreo
 -- Metemos unos datos para la foto
 INSERT INTO Auditoria_ETL (Procedimiento, Estado, RegistrosCargados) 
-VALUES ('ETL_Dimensiones', 'Exitoso', 50), ('ETL_Hechos', 150, 'Exitoso');
+VALUES ('ETL_Dimensiones', 'Exitoso', 50), ('ETL_Hechos', 'Exitoso', 150);
 
 -- Mostramos el log final
 SELECT * FROM Auditoria_ETL;

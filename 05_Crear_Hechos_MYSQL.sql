@@ -5,7 +5,7 @@
 USE talentcorp_dwh;
 
 -- 1. Hechos de las Ausencias
-CREATE TABLE Fact_Ausencias (
+CREATE TABLE IF NOT EXISTS Fact_Ausencias (
     AusenciaKey INT AUTO_INCREMENT PRIMARY KEY,
     EmpleadoKey INT NOT NULL,
     TiempoKey INT NOT NULL,
@@ -13,7 +13,7 @@ CREATE TABLE Fact_Ausencias (
     DepartamentoKey INT NOT NULL,
     OficinaKey INT NOT NULL,
     DiasAusentes INT NOT NULL,
-    EsJustificada BOOLEAN,
+    EsJustificada TINYINT(1),
     FOREIGN KEY (EmpleadoKey) REFERENCES Dim_Empleado(EmpleadoKey),
     FOREIGN KEY (TiempoKey) REFERENCES Dim_Tiempo(TiempoKey),
     FOREIGN KEY (TipoAusenciaKey) REFERENCES Dim_TipoAusencia(TipoAusenciaKey),
@@ -22,7 +22,7 @@ CREATE TABLE Fact_Ausencias (
 );
 
 -- 2. Hechos de las Evaluaciones
-CREATE TABLE Fact_Evaluaciones (
+CREATE TABLE IF NOT EXISTS Fact_Evaluaciones (
     EvaluacionKey INT AUTO_INCREMENT PRIMARY KEY,
     EmpleadoKey INT NOT NULL,
     TiempoKey INT NOT NULL,
@@ -37,7 +37,7 @@ CREATE TABLE Fact_Evaluaciones (
 );
 
 -- 3. Hechos de las Capacitaciones
-CREATE TABLE Fact_Capacitaciones (
+CREATE TABLE IF NOT EXISTS Fact_Capacitaciones (
     CapacitacionKey INT AUTO_INCREMENT PRIMARY KEY,
     EmpleadoKey INT NOT NULL,
     TiempoKey INT NOT NULL,
@@ -53,7 +53,7 @@ CREATE TABLE Fact_Capacitaciones (
 );
 
 -- 4. Tabla de resumen mensual (Agregada)
-CREATE TABLE Fact_Resumen_Mensual (
+CREATE TABLE IF NOT EXISTS Fact_Resumen_Mensual (
     ResumenKey INT AUTO_INCREMENT PRIMARY KEY,
     TiempoKey INT NOT NULL,
     DepartamentoKey INT NOT NULL,

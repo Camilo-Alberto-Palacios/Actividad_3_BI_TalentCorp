@@ -47,13 +47,20 @@ BEGIN
     JOIN Dim_Departamento dd ON e.DepartamentoID = dd.DepartamentoID
     JOIN Dim_Oficina do ON e.CodigoOficinaAsignada = do.CodigoOficina;
 
-    -- Cargar el resumen mensual que pide gerencia
+    -- 4. Cargar el resumen mensual (Se ajusto para que no falle si falta la fecha exacta)
     INSERT INTO Fact_Resumen_Mensual (TiempoKey, DepartamentoKey, OficinaKey, Headcount, TotalSalarios, SalarioPromedio)
-    SELECT CAST(DATE_FORMAT(NOW(), '%Y%m%d') AS UNSIGNED), dd.DepartamentoKey, do.OficinaKey, COUNT(de.EmpleadoKey), SUM(de.SalarioActual), AVG(de.SalarioActual)
+    SELECT 
+        (SELECT TiempoKey FROM Dim_Tiempo WHERE Fecha = CURRENT_DATE LIMIT 1),
+        dd.DepartamentoKey, 
+        do.OficinaKey, 
+        COUNT(de.EmpleadoKey), 
+        SUM(de.SalarioActual), 
+        AVG(de.SalarioActual)
     FROM Dim_Empleado de
     JOIN Dim_Departamento dd ON de.NombreDepartamento = dd.NombreDepartamento
     JOIN Dim_Oficina do ON de.CiudadOficina = do.Ciudad
     WHERE de.EsActual = TRUE
+    AND (SELECT COUNT(*) FROM Dim_Tiempo WHERE Fecha = CURRENT_DATE) > 0
     GROUP BY dd.DepartamentoKey, do.OficinaKey;
 
     -- Registrar que la carga de hechos funciono

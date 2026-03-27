@@ -5,7 +5,7 @@
 USE talentcorp_dwh;
 
 -- 1. Dimension para el tiempo (Fechas)
-CREATE TABLE Dim_Tiempo (
+CREATE TABLE IF NOT EXISTS Dim_Tiempo (
     TiempoKey INT PRIMARY KEY,
     Fecha DATE NOT NULL,
     Anio INT NOT NULL,
@@ -15,11 +15,11 @@ CREATE TABLE Dim_Tiempo (
     SemanaAnio INT NOT NULL,
     Dia INT NOT NULL,
     NombreDia VARCHAR(20) NOT NULL,
-    EsFinDeSemana BOOLEAN NOT NULL
+    EsFinDeSemana INT NOT NULL
 );
 
 -- 2. Dimension para las oficinas
-CREATE TABLE Dim_Oficina (
+CREATE TABLE IF NOT EXISTS Dim_Oficina (
     OficinaKey INT AUTO_INCREMENT PRIMARY KEY,
     CodigoOficina VARCHAR(20) UNIQUE NOT NULL,
     Ciudad VARCHAR(100),
@@ -28,7 +28,7 @@ CREATE TABLE Dim_Oficina (
 );
 
 -- 3. Dimension para los departamentos
-CREATE TABLE Dim_Departamento (
+CREATE TABLE IF NOT EXISTS Dim_Departamento (
     DepartamentoKey INT AUTO_INCREMENT PRIMARY KEY,
     DepartamentoID INT UNIQUE NOT NULL,
     NombreDepartamento VARCHAR(100),
@@ -36,7 +36,7 @@ CREATE TABLE Dim_Departamento (
 );
 
 -- 4. Dimension para los puestos
-CREATE TABLE Dim_Puesto (
+CREATE TABLE IF NOT EXISTS Dim_Puesto (
     PuestoKey INT AUTO_INCREMENT PRIMARY KEY,
     PuestoID INT UNIQUE NOT NULL,
     NombrePuesto VARCHAR(100),
@@ -44,7 +44,7 @@ CREATE TABLE Dim_Puesto (
 );
 
 -- 5. Dimension para los empleados
-CREATE TABLE Dim_Empleado (
+CREATE TABLE IF NOT EXISTS Dim_Empleado (
     EmpleadoKey INT AUTO_INCREMENT PRIMARY KEY,
     EmpleadoID INT NOT NULL,
     Identificacion VARCHAR(20) NOT NULL,
@@ -58,13 +58,12 @@ CREATE TABLE Dim_Empleado (
     CiudadOficina VARCHAR(100),
     FechaInicioValidez DATETIME NOT NULL,
     FechaFinValidez DATETIME DEFAULT '9999-12-31',
-    EsActual BOOLEAN DEFAULT TRUE,
-    UltimaActualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX idx_scd_empleado (EmpleadoID, EsActual)
+    EsActual INT DEFAULT 1,
+    UltimaActualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 -- Dimension para los tipos de faltas
-CREATE TABLE Dim_TipoAusencia (
+CREATE TABLE IF NOT EXISTS Dim_TipoAusencia (
     TipoAusenciaKey INT AUTO_INCREMENT PRIMARY KEY,
     NombreTipoAusencia VARCHAR(50) UNIQUE NOT NULL
 );
