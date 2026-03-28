@@ -4,27 +4,39 @@
 
 USE talentcorp_dwh;
 
--- 1. VALIDACIÓN DE COMPLETITUD (Ver si se pasaron todos los datos)
+-- 1. AUDITORÍA DE INTEGRIDAD: VALIDACIÓN DE COMPLETITUD (ORIGEN VS DESTINO)
+SELECT 'Resumen de Auditoría de Carga' AS '--- SECCIÓN ---';
+
+-- En esta parte comparamos los registros que hay en el OLTP con los que llegaron al DWH
 SELECT 
     'Empleados' AS Entidad,
-    (SELECT COUNT(*) FROM talentcorp_oltp.Empleados) AS Origen,
-    (SELECT COUNT(*) FROM talentcorp_dwh.Dim_Empleado WHERE EsActual = TRUE) AS Destino,
-    CASE WHEN (SELECT COUNT(*) FROM talentcorp_oltp.Empleados) = (SELECT COUNT(*) FROM talentcorp_dwh.Dim_Empleado WHERE EsActual = TRUE) 
-         THEN '✅ EXITOSO' ELSE '❌ DIFERENCIA' END AS Resultado
+    (SELECT COUNT(*) FROM talentcorp_oltp.Empleados) AS Total_OLTP,
+    (SELECT COUNT(*) FROM talentcorp_dwh.Dim_Empleado WHERE EsActual = TRUE) AS Total_DWH,
+    CASE 
+        WHEN (SELECT COUNT(*) FROM talentcorp_oltp.Empleados) = (SELECT COUNT(*) FROM talentcorp_dwh.Dim_Empleado WHERE EsActual = TRUE) THEN 'OK' 
+        ELSE 'HAY DIFERENCIAS' 
+    END AS Estado
 UNION ALL
 SELECT 
-    'Ausencias' AS Entidad,
-    (SELECT COUNT(*) FROM talentcorp_oltp.Ausencias) AS Origen,
-    (SELECT COUNT(*) FROM talentcorp_dwh.Fact_Ausencias) AS Destino,
-    CASE WHEN (SELECT COUNT(*) FROM talentcorp_oltp.Ausencias) = (SELECT COUNT(*) FROM talentcorp_dwh.Fact_Ausencias) 
-         THEN '✅ EXITOSO' ELSE '❌ DIFERENCIA' END AS Resultado
+    'Ausencias',
+    (SELECT COUNT(*) FROM talentcorp_oltp.Ausencias),
+    (SELECT COUNT(*) FROM talentcorp_dwh.Fact_Ausencias),
+    CASE 
+        WHEN (SELECT COUNT(*) FROM talentcorp_oltp.Ausencias) = (SELECT COUNT(*) FROM talentcorp_dwh.Fact_Ausencias) THEN 'OK' 
+        ELSE 'HAY DIFERENCIAS' 
+    END
 UNION ALL
 SELECT 
-    'Evaluaciones' AS Entidad,
-    (SELECT COUNT(*) FROM talentcorp_oltp.EvaluacionesDesempeno) AS Origen,
-    (SELECT COUNT(*) FROM talentcorp_dwh.Fact_Evaluaciones) AS Destino,
-    CASE WHEN (SELECT COUNT(*) FROM talentcorp_oltp.EvaluacionesDesempeno) = (SELECT COUNT(*) FROM talentcorp_dwh.Fact_Evaluaciones) 
-         THEN '✅ EXITOSO' ELSE '❌ DIFERENCIA' END AS Resultado;
+    'Evaluaciones',
+    (SELECT COUNT(*) FROM talentcorp_oltp.EvaluacionesDesempeno),
+    (SELECT COUNT(*) FROM talentcorp_dwh.Fact_Evaluaciones),
+    CASE 
+        WHEN (SELECT COUNT(*) FROM talentcorp_oltp.EvaluacionesDesempeno) = (SELECT COUNT(*) FROM talentcorp_dwh.Fact_Evaluaciones) THEN 'OK' 
+        ELSE 'HAY DIFERENCIAS' 
+    END;
+
+-- Espacio para separar de los KPIs que siguen en el otro script
+SELECT 'Resultados de Consultas Estratégicas (KPIs)' AS '--- SECCIÓN ---';
 
 TRUNCATE TABLE Auditoria_Calidad;
 
